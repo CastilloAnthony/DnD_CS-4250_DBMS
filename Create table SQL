@@ -1,0 +1,200 @@
+CREATE TABLE `Creature` (
+  `C_Name` char(100),
+  `Size` char(10),
+  `Alignment` char(25),
+  `AC` integer,
+  `HP` integer,
+  `Speed` char(50),
+  `Stats_Strength` integer,
+  `Stats_Dexterity` integer,
+  `Stats_Constitution` integer,
+  `Stats_Intelligence` integer,
+  `Stats_Wisdom` integer,
+  `Stats_Charisma` integer,
+  `Saving Throws` char(50),
+  `D Resistance` char(50),
+  `D Immunity` char(50),
+  `C Immunity` char(50),
+  `Vulnerability` char(50),
+  `CR` integer,
+  `Passive Perception` integer,
+  PRIMARY KEY (`C_Name`)
+);
+
+CREATE TABLE `action` (
+  `A_ID` integer,
+  `Name` char(50),
+  `Description` char(500),
+  PRIMARY KEY (`A_ID`)
+);
+
+CREATE TABLE `Can_Activate` (
+  `C_Name` char(100),
+  `A_ID` integer,
+  PRIMARY KEY (`C_Name`, `A_ID`),
+  FOREIGN KEY (`C_Name`) REFERENCES `Creature`(`C_Name`),
+  FOREIGN KEY (`A_ID`) REFERENCES `action`(`A_ID`)
+);
+
+CREATE TABLE `Equipment` (
+  `Name` char(25),
+  `Description` char(600),
+  `Cost` integer(6),
+  `Weight` integer(3),
+  PRIMARY KEY (`Name`)
+);
+
+CREATE TABLE `Enviornment` (
+  `E_ID` integer,
+  `Plane` char(30),
+  `Biome` char(10),
+  PRIMARY KEY (`E_ID`)
+);
+
+CREATE TABLE `Languages` (
+  `L_Name` char(15),
+  PRIMARY KEY (`L_Name`)
+);
+
+CREATE TABLE `Can_speak` (
+  `C_Name` char(100),
+  `L_Name` char(15),
+  PRIMARY KEY (`C_Name`, `L_Name`),
+  FOREIGN KEY (`C_Name`) REFERENCES `Creature`(`C_Name`),
+  FOREIGN KEY (`L_Name`) REFERENCES `Languages`(`L_Name`)
+);
+
+CREATE TABLE `Spell` (
+  `Level` integer,
+  `Casting time` char(14),
+  `School` char(13),
+  `Range` char(5),
+  `Components` char(4),
+  `Duration` char(15),
+  `Attack/save` char(8),
+  `Damage/effect` char(10),
+  `Description` char(200),
+  `A_ID` Integer,
+  PRIMARY KEY (`A_ID`),
+  FOREIGN KEY (`A_ID`) REFERENCES `action`(`A_ID`)
+);
+
+CREATE TABLE `Can_Create` (
+  `C_Name` char(100),
+  `A_ID` integer,
+  PRIMARY KEY (`C_Name`, `A_ID`),
+  FOREIGN KEY (`A_ID`) REFERENCES `Spell`(`Level`),
+  FOREIGN KEY (`C_Name`) REFERENCES `Creature`(`C_Name`)
+);
+
+CREATE TABLE `Can_aquire` (
+  `C_Name` char(100),
+  `Name` char(25),
+  PRIMARY KEY (`C_Name`, `Name`),
+  FOREIGN KEY (`C_Name`) REFERENCES `Creature`(`C_Name`),
+  FOREIGN KEY (`Name`) REFERENCES `Equipment`(`Name`)
+);
+
+CREATE TABLE `Trait` (
+  `T_ID` integer,
+  `Name` char(50),
+  `Description` char(1000),
+  PRIMARY KEY (`T_ID`)
+);
+
+CREATE TABLE `Describe` (
+  `C_Name` char(100),
+  `T_ID` integer,
+  PRIMARY KEY (`C_Name`, `T_ID`),
+  FOREIGN KEY (`C_Name`) REFERENCES `Creature`(`C_Name`),
+  FOREIGN KEY (`T_ID`) REFERENCES `Trait`(`T_ID`)
+);
+
+CREATE TABLE `Weapon` (
+  `Properties` char(50),
+  `Damage` char(15),
+  `Name` char(25),
+  PRIMARY KEY (`Name`),
+  FOREIGN KEY (`Name`) REFERENCES `Equipment`(`Name`)
+);
+
+CREATE TABLE `Attack` (
+  `Type` char(20),
+  `To hit` char(3),
+  `Range` char(10),
+  `Target` char(30),
+  `A_ID` integer,
+  PRIMARY KEY (`A_ID`),
+  FOREIGN KEY (`A_ID`) REFERENCES `action`(`A_ID`)
+);
+
+CREATE TABLE `Used_For` (
+  `Name` char(25),
+  `A_ID` integer,
+  PRIMARY KEY (`Name`, `A_ID`),
+  FOREIGN KEY (`Name`) REFERENCES `Weapon`(`Name`),
+  FOREIGN KEY (`A_ID`) REFERENCES `Attack`(`A_ID`)
+);
+
+CREATE TABLE `Book` (
+  `B_ID` integer,
+  `Name` char(30),
+  `Page` integer,
+  PRIMARY KEY (`B_ID`)
+);
+
+CREATE TABLE `Lives_in` (
+  `C_Name` char(100),
+  `E_ID` integer,
+  PRIMARY KEY (`C_Name`, `E_ID`),
+  FOREIGN KEY (`E_ID`) REFERENCES `Enviornment`(`E_ID`),
+  FOREIGN KEY (`C_Name`) REFERENCES `Creature`(`C_Name`)
+);
+
+CREATE TABLE `Creature` (
+  `C_Name` char(100),
+  `Size` char(10),
+  `Alignment` char(25),
+  `AC` integer,
+  `HP` integer,
+  `Speed` char(50),
+  `Saving Throws` char(50),
+  `D Resistance` char(50),
+  `D Immunity` char(50),
+  `C Immunity` char(50),
+  `Vulnerability` char(50),
+  `CR` integer(2),
+  PRIMARY KEY (`C_Name`)
+);
+
+CREATE TABLE `Telepathy` (
+  `Range` integer,
+  `L_Name` char(15),
+  PRIMARY KEY (`L_Name`),
+  FOREIGN KEY (`L_Name`) REFERENCES `Languages`(`L_Name`)
+);
+
+CREATE TABLE `Sourced_in` (
+  `A_ID` integer,
+  `Field` Type,
+  PRIMARY KEY (`A_ID`, `Field`),
+  FOREIGN KEY (`A_ID`) REFERENCES `Spell`(`A_ID`),
+  FOREIGN KEY (`A_ID`) REFERENCES `Book`(`B_ID`)
+);
+
+CREATE TABLE `Found_in` (
+  `C_Name` char(100),
+  `S_ID` integer,
+  PRIMARY KEY (`C_Name`, `S_ID`),
+  FOREIGN KEY (`C_Name`) REFERENCES `Book`(`B_ID`),
+  FOREIGN KEY (`C_Name`) REFERENCES `Creature`(`C_Name`)
+);
+
+CREATE TABLE `Utilizes_Senses` (
+  `C_Name` char(100),
+  `Type` char(11),
+  `Range` integer,
+  PRIMARY KEY (`C_Name`, `Type`),
+  FOREIGN KEY (`C_Name`) REFERENCES `Creature`(`C_Name`)
+);
+
